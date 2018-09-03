@@ -200,8 +200,8 @@
                     <excludes>
                         <exclude>**/config/**</exclude>
                         <exclude>**/exception/**</exclude>
-                        <exclude>**/controller/RestExceptionHandler.java</exclude>
-                        <exclude>**/CyrelloApplication.java</exclude>
+                        <exclude>**/controller/RestExceptionHandler.*</exclude>
+                        <exclude>**/CyrelloApplication.*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
