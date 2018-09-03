@@ -19,10 +19,13 @@ public class User {
     @Column(nullable = false)
     private String id;
 
+    @Column(nullable = false, unique = true)
+    private String email;
+
     @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
-    private LocalDateTime regDate;
+    private LocalDateTime registerDate;
 
 }

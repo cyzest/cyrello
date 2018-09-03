@@ -201,6 +201,7 @@
                         <exclude>**/config/**</exclude>
                         <exclude>**/exception/**</exclude>
                         <exclude>**/controller/RestExceptionHandler.*</exclude>
+                        <exclude>**/controller/RestExceptionHandler$*.*</exclude>
                         <exclude>**/CyrelloApplication.*</exclude>
                     </excludes>
                 </configuration>

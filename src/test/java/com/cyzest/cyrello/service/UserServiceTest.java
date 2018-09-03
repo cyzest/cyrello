@@ -3,6 +3,7 @@ package com.cyzest.cyrello.service;
 import com.cyzest.cyrello.dao.User;
 import com.cyzest.cyrello.dao.UserRepository;
 import com.cyzest.cyrello.dto.UserInfo;
+import com.cyzest.cyrello.dto.UserRegParam;
 import com.cyzest.cyrello.exception.BasedException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -11,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -36,85 +36,87 @@ public class UserServiceTest {
     @BeforeEach
     public void setup() {
         userService = new UserService(userRepository, new BCryptPasswordEncoder());
-        defaultUser = new User("cyzest@nate.com", "password", LocalDateTime.now());
+        defaultUser = new User("id","cyzest@nate.com", "password", LocalDateTime.now());
     }
 
     @Test
     public void loadUserByUsernameTest() {
 
-        when(userRepository.findById(anyString())).thenReturn(Optional.of(defaultUser));
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(defaultUser));
 
         UserDetails userDetails = userService.loadUserByUsername("cyzest@nate.com");
 
         Assertions.assertNotNull(userDetails);
-        Assertions.assertEquals("cyzest@nate.com", userDetails.getUsername());
+        Assertions.assertEquals("id", userDetails.getUsername());
 
-        verify(userRepository, times(1)).findById(anyString());
+        verify(userRepository, times(1)).findByEmail(anyString());
 
         clearInvocations(userRepository);
 
-        when(userRepository.findById(anyString())).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
 
         Assertions.assertThrows(
                 UsernameNotFoundException.class,
                 () -> userService.loadUserByUsername("cyzest@nate.com"));
 
-        verify(userRepository, times(1)).findById(anyString());
+        verify(userRepository, times(1)).findByEmail(anyString());
 
         clearInvocations(userRepository);
 
-        when(userRepository.findById(null)).thenThrow(InvalidDataAccessApiUsageException.class);
+        when(userRepository.findByEmail(null)).thenReturn(Optional.empty());
 
         Assertions.assertThrows(
-                InvalidDataAccessApiUsageException.class,
+                UsernameNotFoundException.class,
                 () -> userService.loadUserByUsername(null));
 
-        verify(userRepository, times(1)).findById(null);
+        verify(userRepository, times(1)).findByEmail(null);
     }
 
     @Test
     public void registerUserTest() throws Exception {
 
-        when(userRepository.existsById(anyString())).thenReturn(false);
+        when(userRepository.existsByEmail(anyString())).thenReturn(false);
         when(userRepository.saveAndFlush(any(User.class))).thenReturn(defaultUser);
 
-        UserInfo userInfo = userService.registerUser("cyzest@nate.com", "password");
+        UserInfo userInfo = userService.registerUser(new UserRegParam(anyString(), "password"));
 
         Assertions.assertNotNull(userInfo);
-        Assertions.assertEquals("cyzest@nate.com", userInfo.getId());
+        Assertions.assertEquals("id", userInfo.getId());
 
-        verify(userRepository, times(1)).existsById(anyString());
+        verify(userRepository, times(1)).existsByEmail(anyString());
         verify(userRepository, times(1)).saveAndFlush(any(User.class));
 
         clearInvocations(userRepository);
 
-        when(userRepository.existsById(anyString())).thenReturn(true);
+        when(userRepository.existsByEmail(anyString())).thenReturn(true);
 
         Assertions.assertThrows(
                 BasedException.class,
-                () -> userService.registerUser("cyzest@nate.com", "password"));
+                () -> userService.registerUser(new UserRegParam(anyString(), "password")));
 
-        verify(userRepository, times(1)).existsById(anyString());
-
-        clearInvocations(userRepository);
-
-        when(userRepository.existsById(null)).thenThrow(InvalidDataAccessApiUsageException.class);
-
-        Assertions.assertThrows(
-                InvalidDataAccessApiUsageException.class,
-                () -> userService.registerUser(null, "password"));
-
-        verify(userRepository, times(1)).existsById(null);
+        verify(userRepository, times(1)).existsByEmail(anyString());
 
         clearInvocations(userRepository);
 
-        when(userRepository.existsById(anyString())).thenReturn(false);
+        when(userRepository.existsByEmail(null)).thenReturn(false);
+        when(userRepository.saveAndFlush(any(User.class))).thenThrow(new NullPointerException());
 
         Assertions.assertThrows(
                 NullPointerException.class,
-                () -> userService.registerUser("cyzest@nate.com", null));
+                () -> userService.registerUser(new UserRegParam(null, anyString())));
 
-        verify(userRepository, times(1)).existsById(anyString());
+        verify(userRepository, times(1)).existsByEmail(null);
+        verify(userRepository, times(1)).saveAndFlush(any(User.class));
+
+        clearInvocations(userRepository);
+
+        when(userRepository.existsByEmail(anyString())).thenReturn(false);
+
+        Assertions.assertThrows(
+                NullPointerException.class,
+                () -> userService.registerUser(new UserRegParam(anyString(), null)));
+
+        verify(userRepository, times(1)).existsByEmail(anyString());
     }
 
 }

@@ -1,11 +1,15 @@
 package com.cyzest.cyrello.controller;
 
 import com.cyzest.cyrello.dto.ApiResponse;
+import com.cyzest.cyrello.dto.UserInfo;
+import com.cyzest.cyrello.dto.UserRegParam;
 import com.cyzest.cyrello.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Slf4j
 @RestController
@@ -17,12 +21,15 @@ public class UserController {
 
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse registerUser(
-            @RequestParam String id, @RequestParam String password) throws Exception {
+    public ApiResponse registerUser(@ModelAttribute @Valid UserRegParam userRegParam) throws Exception {
 
-        userService.registerUser(id, password);
+        UserInfo userInfo = userService.registerUser(userRegParam);
 
-        return new ApiResponse(HttpStatus.CREATED.value(), HttpStatus.CREATED.getReasonPhrase());
+        ApiResponse apiResponse = new ApiResponse(HttpStatus.CREATED);
+
+        apiResponse.putExtra("id", userInfo.getId());
+
+        return apiResponse;
     }
 
 }

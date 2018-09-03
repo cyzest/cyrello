@@ -14,12 +14,14 @@ import java.time.LocalDateTime;
 public class UserInfo {
 
     private String id;
-    private LocalDateTime regDate;
+    private String email;
+    private LocalDateTime registerDate;
 
     public UserInfo(User user) {
         Assert.notNull(user, "user must not be null");
         this.id = user.getId();
-        this.regDate = user.getRegDate();
+        this.email = user.getEmail();
+        this.registerDate = user.getRegisterDate();
     }
 
 }

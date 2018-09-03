@@ -1,6 +1,7 @@
 package com.cyzest.cyrello.controller;
 
 import com.cyzest.cyrello.dto.UserInfo;
+import com.cyzest.cyrello.dto.UserRegParam;
 import com.cyzest.cyrello.exception.BasedException;
 import com.cyzest.cyrello.exception.UserExceptionType;
 import com.cyzest.cyrello.service.UserService;
@@ -20,7 +21,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.time.LocalDateTime;
 
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -49,34 +49,41 @@ public class UserControllerTest {
     @Test
     public void registerUserTest() throws Exception {
 
-        when(userService.registerUser(anyString(), anyString()))
-                .thenReturn(new UserInfo("cyzest@nate.com", LocalDateTime.now()));
+        when(userService.registerUser(any(UserRegParam.class)))
+                .thenReturn(new UserInfo("id", "cyzest@nate.com", LocalDateTime.now()));
 
         mvc.perform(post("/api/users")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .content("id=cyzest@nate.com&password=password"))
-                .andExpect(status().isCreated());
+                .content("email=cyzest@nate.com&password=password"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.extra.id", is("id")));
 
-        verify(userService, times(1)).registerUser(anyString(), anyString());
+        verify(userService, times(1)).registerUser(any(UserRegParam.class));
 
         clearInvocations(userService);
 
-        when(userService.registerUser(anyString(), anyString()))
+        when(userService.registerUser(any(UserRegParam.class)))
                 .thenThrow(new BasedException(UserExceptionType.EXIST_USER));
 
         mvc.perform(post("/api/users")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .content("id=cyzest@nate.com&password=password"))
+                .content("email=cyzest@nate.com&password=password"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code", is(UserExceptionType.EXIST_USER.getResultCode())));
 
-        verify(userService, times(1)).registerUser(anyString(), anyString());
+        verify(userService, times(1)).registerUser(any(UserRegParam.class));
 
         clearInvocations(userService);
 
         mvc.perform(post("/api/users")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .content("id=cyzest@nate.com"))
+                .content("email=cyzest@nate.com"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code", is(HttpStatus.BAD_REQUEST.value())));
+
+        mvc.perform(post("/api/users")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .content("email=cyzest&password=password"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code", is(HttpStatus.BAD_REQUEST.value())));
     }

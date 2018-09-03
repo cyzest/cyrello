@@ -28,37 +28,66 @@ public class UserRepositoryTest {
 
     @Test
     public void existsByIdTest() {
-        entityManager.persistAndFlush(new User("cyzest@nate.com", "password", LocalDateTime.now()));
-        Assertions.assertTrue(userRepository.existsById("cyzest@nate.com"));
-        Assertions.assertFalse(userRepository.existsById("cyzest1@nate.com"));
+        entityManager.persistAndFlush(new User("id", "cyzest@nate.com", "password", LocalDateTime.now()));
+        Assertions.assertTrue(userRepository.existsById("id"));
+        Assertions.assertFalse(userRepository.existsById("id2"));
         Assertions.assertThrows(InvalidDataAccessApiUsageException.class, () -> userRepository.existsById(null));
     }
 
     @Test
     public void findByIdTest() {
-        entityManager.persistAndFlush(new User("cyzest@nate.com", "password", LocalDateTime.now()));
-        Optional<User> userOptional = userRepository.findById("cyzest@nate.com");
+        entityManager.persistAndFlush(new User("id", "cyzest@nate.com", "password", LocalDateTime.now()));
+        Optional<User> userOptional = userRepository.findById("id");
         Assertions.assertTrue(userOptional.isPresent());
-        Assertions.assertEquals("cyzest@nate.com", userOptional.get().getId());
-        Assertions.assertFalse(userRepository.findById("cyzest1@nate.com").isPresent());
+        Assertions.assertEquals("id", userOptional.get().getId());
+        Assertions.assertFalse(userRepository.findById("id2").isPresent());
         Assertions.assertThrows(InvalidDataAccessApiUsageException.class, () -> userRepository.findById(null));
     }
 
     @Test
+    public void existsByEmailTest() {
+        entityManager.persistAndFlush(new User("id", "cyzest@nate.com", "password", LocalDateTime.now()));
+        Assertions.assertTrue(userRepository.existsByEmail("cyzest@nate.com"));
+        Assertions.assertFalse(userRepository.existsByEmail("cyzest2@nate.com"));
+        Assertions.assertFalse(userRepository.existsByEmail(null));
+    }
+
+    @Test
+    public void findByEmailTest() {
+        entityManager.persistAndFlush(new User("id", "cyzest@nate.com", "password", LocalDateTime.now()));
+        Optional<User> userOptional = userRepository.findByEmail("cyzest@nate.com");
+        Assertions.assertTrue(userOptional.isPresent());
+        Assertions.assertEquals("cyzest@nate.com", userOptional.get().getEmail());
+        Assertions.assertFalse(userRepository.findByEmail("cyzest2@nate.com").isPresent());
+        Assertions.assertFalse(userRepository.findByEmail(null).isPresent());
+    }
+
+    @Test
     public void saveTest() {
-        User user = new User("cyzest@nate.com", "password", LocalDateTime.now());
+        User user = new User("id", "cyzest@nate.com", "password", LocalDateTime.now());
         User userEntity = userRepository.saveAndFlush(user);
         Assertions.assertNotNull(userEntity);
         Assertions.assertEquals(user.getId(), userEntity.getId());
         Assertions.assertThrows(
+                DataIntegrityViolationException.class,
+                () -> userRepository.saveAndFlush(
+                        new User("id2", "cyzest@nate.com", "password", LocalDateTime.now())));
+        Assertions.assertThrows(
                 JpaSystemException.class,
-                () -> userRepository.saveAndFlush(new User(null, "password", LocalDateTime.now())));
+                () -> userRepository.saveAndFlush(
+                        new User(null, "cyzest3@nate.com", "password", LocalDateTime.now())));
         Assertions.assertThrows(
                 DataIntegrityViolationException.class,
-                () -> userRepository.saveAndFlush(new User("cyzest1@nate.com", null, LocalDateTime.now())));
+                () -> userRepository.saveAndFlush(
+                        new User("id4", null, "password", LocalDateTime.now())));
         Assertions.assertThrows(
                 DataIntegrityViolationException.class,
-                () -> userRepository.saveAndFlush(new User("cyzest2@nate.com", "password", null)));
+                () -> userRepository.saveAndFlush(
+                        new User("id5", "cyzest5@nate.com", null, LocalDateTime.now())));
+        Assertions.assertThrows(
+                DataIntegrityViolationException.class,
+                () -> userRepository.saveAndFlush(
+                        new User("id6", "cyzest6@nate.com", "password", null)));
     }
 
 }

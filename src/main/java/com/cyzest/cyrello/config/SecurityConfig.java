@@ -47,7 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors()
                 .and()
                 .formLogin()
-                .usernameParameter("id")
+                .usernameParameter("email")
                 .passwordParameter("password")
                 .loginProcessingUrl("/api/users/login")
                 .successHandler(new RestAuthenticationSuccessHandler(objectMapper))
