@@ -1,0 +1,20 @@
+language: java
+
+sudo: required
+
+jdk:
+  - openjdk8
+
+branches:
+  only:
+    - master
+
+cache:
+  directories:
+    - '$HOME/.m2/repository'
+
+script:
+  - "mvn clean compile test"
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
