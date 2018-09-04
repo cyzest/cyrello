@@ -107,6 +107,36 @@ public class TaskService {
         taskRepository.saveAndFlush(task);
     }
 
+    public void completeTask(String userId, long taskId) throws Exception {
+
+        Assert.notNull(userId, "userId must not be null");
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BasedException(CommonExceptionType.UNAUTHORIZED));
+
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new BasedException(TaskExceptionType.NOT_EXIST_TASK));
+
+        if (!user.getId().equals(task.getUser().getId())) {
+            throw new BasedException(CommonExceptionType.FORBIDDEN);
+        }
+
+        if (task.getCompleteDate() == null) {
+
+            if (taskRepository.existsNonCompleteInverseRelationTask(taskId)) {
+                // 완료처리 되지 않은 역 참조 태스크가 존재하면 예외처리
+                throw new BasedException(TaskExceptionType.EXIST_NON_COMPLETE_INVERSE_REL_TASK);
+            }
+
+            LocalDateTime localDateTime = LocalDateTime.now();
+
+            task.setUpdateDate(localDateTime);
+            task.setCompleteDate(localDateTime);
+
+            taskRepository.saveAndFlush(task);
+        }
+    }
+
     private List<Task> getValidRelationTasks(User user, List<Long> relationTaskIds) throws BasedException {
 
         List<Task> validRelationTasks = taskRepository.findByUserAndIdIn(user, relationTaskIds);

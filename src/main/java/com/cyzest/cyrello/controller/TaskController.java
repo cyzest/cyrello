@@ -44,4 +44,12 @@ public class TaskController {
         return new ApiResponse();
     }
 
+    @PostMapping("/tasks/{id}/complete")
+    public ApiResponse completeTask(@PathVariable long id, Authentication authentication) throws Exception {
+
+        taskService.completeTask(authentication.getName(), id);
+
+        return new ApiResponse();
+    }
+
 }

@@ -292,6 +292,53 @@ public class TaskServiceTest {
         verify(taskRepository, times(1)).existsInverseRelationTask(eq(1L), anyIterable());
     }
 
+    @Test
+    @DisplayName("completeTaskTest() - 기본")
+    public void completeTaskTest1() throws Exception {
+
+        when(userRepository.findById(anyString())).thenReturn(Optional.of(defaultUser));
+        when(taskRepository.findById(anyLong())).thenReturn(Optional.of(createDefaultTask(1, false)));
+        when(taskRepository.existsNonCompleteInverseRelationTask(anyLong())).thenReturn(false);
+        when(taskRepository.saveAndFlush(any(Task.class))).thenReturn(any());
+
+        taskService.completeTask("id", 1L);
+
+        verify(userRepository, times(1)).findById(anyString());
+        verify(taskRepository, times(1)).findById(anyLong());
+        verify(taskRepository, times(1)).existsNonCompleteInverseRelationTask(anyLong());
+        verify(taskRepository, times(1)).saveAndFlush(any());
+    }
+
+    @Test
+    @DisplayName("completeTaskTest() - 역 참조 태스크 존재")
+    public void completeTaskTest2() throws Exception {
+
+        when(userRepository.findById(anyString())).thenReturn(Optional.of(defaultUser));
+        when(taskRepository.findById(anyLong())).thenReturn(Optional.of(createDefaultTask(1, false)));
+        when(taskRepository.existsNonCompleteInverseRelationTask(anyLong())).thenReturn(true);
+
+        Assertions.assertThrows(
+                BasedException.class,
+                () -> taskService.completeTask("id", 1L));
+
+        verify(userRepository, times(1)).findById(anyString());
+        verify(taskRepository, times(1)).findById(anyLong());
+        verify(taskRepository, times(1)).existsNonCompleteInverseRelationTask(anyLong());
+    }
+
+    @Test
+    @DisplayName("completeTaskTest() - 이미 완료 처리")
+    public void completeTaskTest3() throws Exception {
+
+        when(userRepository.findById(anyString())).thenReturn(Optional.of(defaultUser));
+        when(taskRepository.findById(anyLong())).thenReturn(Optional.of(createDefaultTask(1, true)));
+
+        taskService.completeTask("id", 1L);
+
+        verify(userRepository, times(1)).findById(anyString());
+        verify(taskRepository, times(1)).findById(anyLong());
+    }
+
     private Task createDefaultTask(long id, boolean isCompleted) {
         Task task = new Task();
         LocalDateTime currentDate = LocalDateTime.now();

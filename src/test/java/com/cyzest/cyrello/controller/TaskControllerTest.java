@@ -123,6 +123,24 @@ public class TaskControllerTest {
         updateTaskExceptionTest(TaskExceptionType.EXIST_INVERSE_REL_TASK);
     }
 
+    @Test
+    public void completeTaskTest() throws Exception {
+
+        doNothing().when(taskService).completeTask(anyString(), anyLong());
+
+        mvc.perform(post("/api/tasks/1/complete")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .principal(authentication)
+                .content(""))
+                .andExpect(status().isOk());
+
+        verify(taskService, times(1)).completeTask(anyString(), anyLong());
+
+        clearInvocations(taskService);
+
+        completeTaskExceptionTest(TaskExceptionType.EXIST_NON_COMPLETE_INVERSE_REL_TASK);
+    }
+
     private void registerTaskExceptionTest(ExceptionType exceptionType) throws Exception {
 
         when(taskService.registerTask(eq("id"), any(TaskRegParam.class)))
@@ -160,6 +178,26 @@ public class TaskControllerTest {
 
         verify(taskService, times(1))
                 .updateTask(anyString(), anyLong(), any(TaskRegParam.class));
+
+        clearInvocations(taskService);
+    }
+
+    private void completeTaskExceptionTest(ExceptionType exceptionType) throws Exception {
+
+        doThrow(new BasedException(exceptionType))
+                .when(taskService).completeTask(anyString(), anyLong());
+
+        TaskRegParam taskRegParam = new TaskRegParam();
+        taskRegParam.setContent("test");
+
+        mvc.perform(post("/api/tasks/1/complete")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .principal(authentication)
+                .content(""))
+                .andExpect(status().is(exceptionType.getStatusCode().value()))
+                .andExpect(jsonPath("$.code",is(exceptionType.getResultCode())));
+
+        verify(taskService, times(1)).completeTask(anyString(), anyLong());
 
         clearInvocations(taskService);
     }
