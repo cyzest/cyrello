@@ -17,6 +17,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -47,29 +48,81 @@ public class TaskService {
         List<Long> relationTaskIds = taskRegParam.getRelationTaskIds();
 
         if (!CollectionUtils.isEmpty(relationTaskIds)) {
-
-            /*
-                참조 태스크를 추가하여 등록할 경우
-                유효하지 않은 태스크 및 완료처리 된 태스크가 없는지 확인한다.
-             */
-
-            List<Task> validRelationTasks = taskRepository.findByUserAndIdIn(user, relationTaskIds);
-
-            if (CollectionUtils.isEmpty(validRelationTasks) || relationTaskIds.size() > validRelationTasks.size()) {
-                throw new BasedException(TaskExceptionType.CONTAINS_INVALID_REL_TASK);
-            }
-
-            long completedRelationTaskCount = validRelationTasks.stream()
-                    .filter(relationTask -> relationTask.getCompleteDate() != null).count();
-
-            if (completedRelationTaskCount > 0) {
-                throw new BasedException(TaskExceptionType.CONTAINS_COMPLETED_REL_TASK);
-            }
-
-            task.setRelationTasks(validRelationTasks);
+            // 참조 태스크를 추가하여 등록 할 경우 유효하지 않은 태스크 및 완료처리 된 태스크가 없는지 확인한다.
+            task.setRelationTasks(getValidRelationTasks(user, relationTaskIds));
         }
 
         return new TaskInfo(taskRepository.saveAndFlush(task));
+    }
+
+    public void updateTask(String userId, long taskId, TaskRegParam taskRegParam) throws Exception {
+
+        Assert.notNull(userId, "userId must not be null");
+        Assert.notNull(taskRegParam, "taskRegParam must not be null");
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BasedException(CommonExceptionType.UNAUTHORIZED));
+
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new BasedException(TaskExceptionType.NOT_EXIST_TASK));
+
+        if (!user.getId().equals(task.getUser().getId())) {
+            throw new BasedException(CommonExceptionType.FORBIDDEN);
+        }
+
+        if (task.getCompleteDate() != null) {
+            // 완료처리 된 태스크는 수정 할 수 없다.
+            throw new BasedException(TaskExceptionType.COMPLETED_TASK);
+        }
+
+        task.setContent(taskRegParam.getContent());
+
+        List<Long> relationTaskIds = taskRegParam.getRelationTaskIds();
+
+        if (!CollectionUtils.isEmpty(relationTaskIds)) {
+
+            if (relationTaskIds.contains(taskId)) {
+                // 참조 태스크에 수정 할 태스크가 존재하면 예외 처리
+                throw new BasedException(TaskExceptionType.CONTAINS_INVALID_REL_TASK);
+            }
+
+            // 참조 태스크가 유효하지 않은 태스크 및 완료처리 된 태스크가 없는지 확인한다.
+            List<Task> validRelationTasks = getValidRelationTasks(user, relationTaskIds);
+
+            List<Long> validRelationTaskIds = validRelationTasks.stream().map(Task::getId).collect(Collectors.toList());
+
+            if (taskRepository.existsInverseRelationTask(taskId, validRelationTaskIds)) {
+                // 참조 태스크가 수정 할 태스크를 참조하고 있으면 예외 처리
+                throw new BasedException(TaskExceptionType.EXIST_INVERSE_REL_TASK);
+            }
+
+            task.setRelationTasks(validRelationTasks);
+
+        } else {
+            task.setRelationTasks(null);
+        }
+
+        task.setUpdateDate(LocalDateTime.now());
+
+        taskRepository.saveAndFlush(task);
+    }
+
+    private List<Task> getValidRelationTasks(User user, List<Long> relationTaskIds) throws BasedException {
+
+        List<Task> validRelationTasks = taskRepository.findByUserAndIdIn(user, relationTaskIds);
+
+        if (CollectionUtils.isEmpty(validRelationTasks) || relationTaskIds.size() > validRelationTasks.size()) {
+            throw new BasedException(TaskExceptionType.CONTAINS_INVALID_REL_TASK);
+        }
+
+        long completedRelationTaskCount = validRelationTasks.stream()
+                .filter(relationTask -> relationTask.getCompleteDate() != null).count();
+
+        if (completedRelationTaskCount > 0) {
+            throw new BasedException(TaskExceptionType.CONTAINS_COMPLETED_REL_TASK);
+        }
+
+        return validRelationTasks;
     }
 
 }

@@ -34,4 +34,14 @@ public class TaskController {
         return apiResponse;
     }
 
+    @PutMapping("/tasks/{id}")
+    public ApiResponse updateTask(
+            @PathVariable long id,
+            @RequestBody @Valid TaskRegParam taskRegParam, Authentication authentication) throws Exception {
+
+        taskService.updateTask(authentication.getName(), id, taskRegParam);
+
+        return new ApiResponse();
+    }
+
 }

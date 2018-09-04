@@ -14,10 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @DataJpaTest
@@ -61,6 +58,14 @@ public class TaskRepositoryTest {
         task5.setRelationTasks(Arrays.asList(task2, task3));
         taskRepository.saveAndFlush(task5);
         Assertions.assertEquals(getIncrement(), task5.getId().longValue());
+
+        task4.setRelationTasks(null);
+        Task entityTask4 = taskRepository.saveAndFlush(task4);
+        Assertions.assertNull(entityTask4.getRelationTasks());
+
+        task5.setRelationTasks(new LinkedList<>(Collections.singletonList(task3)));
+        Task entityTask5 = taskRepository.saveAndFlush(task5);
+        Assertions.assertEquals(1, entityTask5.getRelationTasks().size());
     }
 
     @Test
@@ -152,6 +157,50 @@ public class TaskRepositoryTest {
 
         Assertions.assertNotNull(tasks);
         Assertions.assertEquals(5, tasks.size());
+    }
+
+    @Test
+    public void existsInverseRelationTaskTest() {
+
+        Task task1 = createBasedTask();
+        entityManager.persistAndFlush(task1);
+        getIncrement();
+
+        Task task2 = createBasedTask();
+        task2.setRelationTasks(Collections.singletonList(task1));
+        entityManager.persistAndFlush(task2);
+        getIncrement();
+
+        Assertions.assertTrue(
+                taskRepository.existsInverseRelationTask(task1.getId(), Collections.singletonList(task2.getId())));
+
+        Assertions.assertFalse(
+                taskRepository.existsInverseRelationTask(task2.getId(), Collections.singletonList(task1.getId())));
+    }
+
+    @Test
+    public void existsNonCompleteInverseRelationTaskTest() {
+
+        Task task1 = createBasedTask();
+        entityManager.persistAndFlush(task1);
+        getIncrement();
+
+        Task task2 = createBasedTask();
+        task2.setRelationTasks(Collections.singletonList(task1));
+        entityManager.persistAndFlush(task2);
+        getIncrement();
+
+        Task task3 = createBasedTask();
+        task3.setCompleteDate(LocalDateTime.now());
+        task3.setRelationTasks(Arrays.asList(task1, task2));
+        entityManager.persistAndFlush(task3);
+        getIncrement();
+
+        Assertions.assertTrue(
+                taskRepository.existsNonCompleteInverseRelationTask(task1.getId()));
+
+        Assertions.assertFalse(
+                taskRepository.existsNonCompleteInverseRelationTask(task2.getId()));
     }
 
     private List<Long> persistTestTasks() {

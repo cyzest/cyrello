@@ -36,9 +36,9 @@ public class Task {
 
     @ManyToMany
     @JoinTable(
-            name="REL_TASKS",
-            joinColumns = @JoinColumn(name="TASK_ID"),
-            inverseJoinColumns = @JoinColumn(name="REL_TASK_ID"),
+            name = "REL_TASK",
+            joinColumns = @JoinColumn(name = "TASK_ID"),
+            inverseJoinColumns = @JoinColumn(name = "REL_TASK_ID"),
             uniqueConstraints = @UniqueConstraint(columnNames = {"TASK_ID", "REL_TASK_ID"})
     )
     private List<Task> relationTasks;
