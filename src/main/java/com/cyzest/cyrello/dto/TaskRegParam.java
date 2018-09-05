@@ -14,9 +14,10 @@ import java.util.List;
 public class TaskRegParam {
 
     @NotEmpty
+    @Size(max = 100)
     private String content;
 
-    @Size(max = 50)
+    @Size(max = 10)
     private List<Long> relationTaskIds;
 
 }

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Cyrello</title>
+    <link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="//stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="/js/paging.js"></script>
+    <script src="/js/task.js"></script>
+</head>
+<body>
+<div class="container">
+
+    <!--div class="row" style="margin:25px 0px 25px 0px">
+        <div class="col-12"><h3>할일 목록</h3> <input type="button" class="btn float-right" value="test"></div>
+    </div-->
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="margin:25px 0px 25px 0px">
+        <a class="navbar-brand" href="/">할일 목록</a>
+        <div id="navbarNavDropdown" class="navbar-collapse collapse">
+            <ul class="navbar-nav mr-auto">
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="javascript:logout();">로그아웃</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <form id="taskForm" style="width:100%;" onsubmit="return false;">
+        <div class="input-group input-group-lg" style="margin-bottom:10px;">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-lg1">할 일</span>
+            </div>
+            <input type="text" id="content" placeholder="할일을 적어주세요. (최대 100자)" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm">
+        </div>
+        <div class="input-group input-group-lg" style="margin-bottom:10px;">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-lg2">참조 할 할일 ID 목록</span>
+            </div>
+            <input type="text" id="relationTaskIds" placeholder="',' 쉼표로 구분해 주세요. (최대 10개)" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm">
+        </div>
+        <button style="margin-bottom:20px" type="submit" class="btn btn-primary" onclick="javascript:registerTask();">할일 등록</button>
+    </form>
+
+    <table id="task-list" class="table table-hover" style="width:100%;">
+        <thead class="thead-light">
+        <tr>
+            <th style="width: 10%">id</th>
+            <th style="width: 30%">할일</th>
+            <th style="width: 20%">참조</th>
+            <th style="width: 15%">작성일시</th>
+            <th style="width: 15%">최종수정일시</th>
+            <th style="width: 10%">완료처리</th>
+        </tr>
+        </thead>
+        <tbody id="task-body"></tbody>
+    </table>
+
+    <div id="paging" class="center-block"></div>
+
+    <div id="updatePopup" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">할일 수정</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="updateTask" onsubmit="return false;">
+                        <input id="uptTaskId" type="hidden" value="" />
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend" style="width:20%;">
+                                <span class="input-group-text" style="width:100%;">할 일</span>
+                            </div>
+                            <input id="uptContent" type="text" value="" class="form-control" placeholder="할일을 적어주세요. (최대 100자)"/>
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend" style="width:35%;">
+                                <span class="input-group-text" style="width:100%;">참조 할 할일 ID 목록</span>
+                            </div>
+                            <input id="uptRelationTaskIds" type="text" value="" class="form-control" placeholder="',' 쉼표로 구분해 주세요. (최대 10개)"/>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                            <button type="submit" class="btn btn-primary task-update-btn" onclick="javascript:updateTask();">수정하기</button>
+                            <button type="submit" class="btn btn-success task-update-btn" onclick="javascript:completeTask();">완료하기</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

@@ -393,7 +393,11 @@ public class TaskServiceTest {
         when(userRepository.findById(eq("id"))).thenReturn(Optional.of(defaultUser));
         when(taskRepository.findById(eq(1L))).thenReturn(Optional.of(createDefaultTask(1L, false)));
 
-        Assertions.assertNotNull(taskService.getTask("id", 1L));
+        TaskInfo taskInfo = taskService.getTask("id", 1L);
+
+        Assertions.assertNotNull(taskInfo);
+        Assertions.assertNotNull(taskInfo.getRegisterDateToFormatString());
+        Assertions.assertNotNull(taskInfo.getUpdateDateToFormatString());
         Assertions.assertThrows(BasedException.class, () -> taskService.getTask("id1", 1L));
         Assertions.assertThrows(BasedException.class, () -> taskService.getTask("id", 2L));
     }
