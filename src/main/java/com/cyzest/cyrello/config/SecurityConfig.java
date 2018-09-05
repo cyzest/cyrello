@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
@@ -27,7 +26,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/", "/css/**", "/js/**", "/h2", "/h2/**");
+        web.ignoring().antMatchers("/css/**", "/js/**", "/h2", "/h2/**");
     }
 
     @Override
@@ -36,12 +35,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json().build();
 
         http.csrf().disable()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.NEVER)
-                .and()
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .antMatchers(HttpMethod.POST, "/api/users", "/api/users/login").permitAll()
+                .antMatchers(HttpMethod.GET, "/").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/users").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .cors()
@@ -52,6 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginProcessingUrl("/api/users/login")
                 .successHandler(new RestAuthenticationSuccessHandler(objectMapper))
                 .failureHandler(new RestAuthenticationFailureHandler(objectMapper))
+                .permitAll()
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(new RestAuthenticationEntryPoint(objectMapper))
@@ -63,12 +61,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("*");
-        configuration.addAllowedMethod("*");
-        configuration.addAllowedHeader("*");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration("/**", new CorsConfiguration());
         return source;
     }
 

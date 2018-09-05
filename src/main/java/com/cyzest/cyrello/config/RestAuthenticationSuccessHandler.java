@@ -36,8 +36,6 @@ public class RestAuthenticationSuccessHandler implements AuthenticationSuccessHa
         ApiResponse apiResponse = new ApiResponse(
                 HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase());
 
-        apiResponse.putExtra("token", request.getSession().getId());
-
         mapper.writeValue(writer, apiResponse);
 
         writer.flush();
