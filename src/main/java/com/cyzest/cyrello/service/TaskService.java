@@ -4,13 +4,18 @@ import com.cyzest.cyrello.dao.Task;
 import com.cyzest.cyrello.dao.TaskRepository;
 import com.cyzest.cyrello.dao.User;
 import com.cyzest.cyrello.dao.UserRepository;
+import com.cyzest.cyrello.dto.PagingParam;
 import com.cyzest.cyrello.dto.TaskInfo;
+import com.cyzest.cyrello.dto.TaskInfoResult;
 import com.cyzest.cyrello.dto.TaskRegParam;
 import com.cyzest.cyrello.exception.BasedException;
 import com.cyzest.cyrello.exception.CommonExceptionType;
 import com.cyzest.cyrello.exception.TaskExceptionType;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -135,6 +140,49 @@ public class TaskService {
 
             taskRepository.saveAndFlush(task);
         }
+    }
+
+    public TaskInfoResult getTasks(String userId, PagingParam pagingParam) throws Exception {
+
+        Assert.notNull(userId, "userId must not be null");
+        Assert.notNull(pagingParam, "pagingParam must not be null");
+
+        TaskInfoResult taskInfoResult = new TaskInfoResult();
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BasedException(CommonExceptionType.UNAUTHORIZED));
+
+        PageRequest pageRequest = PageRequest.of(
+                pagingParam.getPage() - 1, pagingParam.getSize(), new Sort(Sort.Direction.ASC, "id"));
+
+        Page<Task> tasksPage = taskRepository.findByUser(user, pageRequest);
+
+        List<Task> tasks = tasksPage.getContent();
+
+        taskInfoResult.setTotalCount((int) tasksPage.getTotalElements());
+
+        if (tasks != null) {
+            taskInfoResult.setTaskInfos(tasks.stream().map(TaskInfo::new).collect(Collectors.toList()));
+        }
+
+        return taskInfoResult;
+    }
+
+    public TaskInfo getTask(String userId, long taskId) throws Exception {
+
+        Assert.notNull(userId, "userId must not be null");
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BasedException(CommonExceptionType.UNAUTHORIZED));
+
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new BasedException(TaskExceptionType.NOT_EXIST_TASK));
+
+        if (!user.getId().equals(task.getUser().getId())) {
+            throw new BasedException(CommonExceptionType.FORBIDDEN);
+        }
+
+        return new TaskInfo(task);
     }
 
     private List<Task> getValidRelationTasks(User user, List<Long> relationTaskIds) throws BasedException {

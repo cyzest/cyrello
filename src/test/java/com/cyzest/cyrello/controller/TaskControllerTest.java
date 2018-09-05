@@ -1,9 +1,7 @@
 package com.cyzest.cyrello.controller;
 
 import com.cyzest.cyrello.dao.User;
-import com.cyzest.cyrello.dto.DefaultAuthUser;
-import com.cyzest.cyrello.dto.TaskInfo;
-import com.cyzest.cyrello.dto.TaskRegParam;
+import com.cyzest.cyrello.dto.*;
 import com.cyzest.cyrello.exception.BasedException;
 import com.cyzest.cyrello.exception.CommonExceptionType;
 import com.cyzest.cyrello.exception.ExceptionType;
@@ -25,14 +23,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
@@ -141,6 +139,73 @@ public class TaskControllerTest {
         completeTaskExceptionTest(TaskExceptionType.EXIST_NON_COMPLETE_INVERSE_REL_TASK);
     }
 
+    @Test
+    public void getTasksTest() throws Exception {
+
+        when(taskService.getTasks(eq("id"), eq(new PagingParam(1, 10)))).thenAnswer(mock -> {
+            TaskInfoResult taskInfoResult = new TaskInfoResult();
+            taskInfoResult.setTotalCount(20);
+            taskInfoResult.setTaskInfos(
+                    LongStream.range(1, 11)
+                            .mapToObj(this::createDefaultTaskInfo)
+                            .collect(Collectors.toList()));
+            return taskInfoResult;
+        });
+
+        mvc.perform(get("/api/tasks")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .principal(authentication)
+                .content(""))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.extra.totalCount", is(20)))
+                .andExpect(jsonPath("$.extra.taskInfos[0].id", is(1)));
+
+        verify(taskService, times(1))
+                .getTasks(eq("id"), eq(new PagingParam(1, 10)));
+
+        clearInvocations(taskService);
+
+        when(taskService.getTasks(eq("id"), eq(new PagingParam(2, 10)))).thenAnswer(mock -> {
+            TaskInfoResult taskInfoResult = new TaskInfoResult();
+            taskInfoResult.setTotalCount(20);
+            taskInfoResult.setTaskInfos(
+                    LongStream.range(11, 21)
+                            .mapToObj(this::createDefaultTaskInfo)
+                            .collect(Collectors.toList()));
+            return taskInfoResult;
+        });
+
+        mvc.perform(get("/api/tasks?page=2")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .principal(authentication)
+                .content(""))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.extra.totalCount", is(20)))
+                .andExpect(jsonPath("$.extra.taskInfos[0].id", is(11)));
+
+        verify(taskService, times(1))
+                .getTasks(eq("id"), eq(new PagingParam(2, 10)));
+
+        clearInvocations(taskService);
+    }
+
+    @Test
+    public void getTaskTest() throws Exception {
+
+        when(taskService.getTask(eq("id"), eq(1L))).thenReturn(createDefaultTaskInfo(1L));
+
+        mvc.perform(get("/api/tasks/1")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .principal(authentication)
+                .content(""))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.extra.taskInfo.id", is(1)));
+
+        verify(taskService, times(1)).getTask(eq("id"), eq(1L));
+
+        clearInvocations(taskService);
+    }
+
     private void registerTaskExceptionTest(ExceptionType exceptionType) throws Exception {
 
         when(taskService.registerTask(eq("id"), any(TaskRegParam.class)))
@@ -154,7 +219,7 @@ public class TaskControllerTest {
                 .principal(authentication)
                 .content(objectMapper.writeValueAsString(taskRegParam)))
                 .andExpect(status().is(exceptionType.getStatusCode().value()))
-                .andExpect(jsonPath("$.code",is(exceptionType.getResultCode())));
+                .andExpect(jsonPath("$.code", is(exceptionType.getResultCode())));
 
         verify(taskService, times(1)).registerTask(eq("id"), any(TaskRegParam.class));
 
@@ -174,7 +239,7 @@ public class TaskControllerTest {
                 .principal(authentication)
                 .content(objectMapper.writeValueAsString(taskRegParam)))
                 .andExpect(status().is(exceptionType.getStatusCode().value()))
-                .andExpect(jsonPath("$.code",is(exceptionType.getResultCode())));
+                .andExpect(jsonPath("$.code", is(exceptionType.getResultCode())));
 
         verify(taskService, times(1))
                 .updateTask(anyString(), anyLong(), any(TaskRegParam.class));
@@ -195,11 +260,22 @@ public class TaskControllerTest {
                 .principal(authentication)
                 .content(""))
                 .andExpect(status().is(exceptionType.getStatusCode().value()))
-                .andExpect(jsonPath("$.code",is(exceptionType.getResultCode())));
+                .andExpect(jsonPath("$.code", is(exceptionType.getResultCode())));
 
         verify(taskService, times(1)).completeTask(anyString(), anyLong());
 
         clearInvocations(taskService);
+    }
+
+    private TaskInfo createDefaultTaskInfo(long id) {
+        TaskInfo taskInfo = new TaskInfo();
+        LocalDateTime currentDate = LocalDateTime.now();
+        taskInfo.setId(id);
+        taskInfo.setContent("test");
+        taskInfo.setRegisterDate(currentDate);
+        taskInfo.setUpdateDate(currentDate);
+        taskInfo.setUser(new UserInfo());
+        return taskInfo;
     }
 
 }

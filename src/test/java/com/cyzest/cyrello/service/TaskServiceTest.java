@@ -4,7 +4,9 @@ import com.cyzest.cyrello.dao.Task;
 import com.cyzest.cyrello.dao.TaskRepository;
 import com.cyzest.cyrello.dao.User;
 import com.cyzest.cyrello.dao.UserRepository;
+import com.cyzest.cyrello.dto.PagingParam;
 import com.cyzest.cyrello.dto.TaskInfo;
+import com.cyzest.cyrello.dto.TaskInfoResult;
 import com.cyzest.cyrello.dto.TaskRegParam;
 import com.cyzest.cyrello.exception.BasedException;
 import com.cyzest.cyrello.exception.TaskExceptionType;
@@ -17,9 +19,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
@@ -63,6 +69,7 @@ public class TaskServiceTest {
         Assertions.assertEquals(1, taskInfo1.getId().longValue());
 
         verify(userRepository, times(1)).findById(anyString());
+        verify(taskRepository, never()).findByUserAndIdIn(any(), any());
         verify(taskRepository, times(1)).saveAndFlush(any(Task.class));
     }
 
@@ -73,7 +80,7 @@ public class TaskServiceTest {
         int relationTaskCount = 3;
 
         when(userRepository.findById(anyString())).thenReturn(Optional.of(defaultUser));
-        when(taskRepository.findByUserAndIdIn(any(User.class), anyIterable()))
+        when(taskRepository.findByUserAndIdIn(eq(defaultUser), anyIterable()))
                 .thenReturn(LongStream.range(1, relationTaskCount + 1)
                         .mapToObj(idx -> createDefaultTask(idx, false))
                         .collect(Collectors.toList()));
@@ -97,7 +104,7 @@ public class TaskServiceTest {
         Assertions.assertEquals(relationTaskCount, taskInfo2.getRelationTasks().size());
 
         verify(userRepository, times(1)).findById(anyString());
-        verify(taskRepository, times(1)).findByUserAndIdIn(any(User.class), anyIterable());
+        verify(taskRepository, times(1)).findByUserAndIdIn(eq(defaultUser), anyIterable());
         verify(taskRepository, times(1)).saveAndFlush(any(Task.class));
     }
 
@@ -106,7 +113,7 @@ public class TaskServiceTest {
     public void registerTaskTest3() {
 
         when(userRepository.findById(anyString())).thenReturn(Optional.of(defaultUser));
-        when(taskRepository.findByUserAndIdIn(any(User.class), anyIterable()))
+        when(taskRepository.findByUserAndIdIn(eq(defaultUser), anyIterable()))
                 .thenReturn(LongStream.range(1, 4)
                         .mapToObj(idx -> createDefaultTask(idx, true))
                         .collect(Collectors.toList()));
@@ -122,7 +129,8 @@ public class TaskServiceTest {
                         () -> taskService.registerTask(anyString(), taskRegParam3)).getExceptionType());
 
         verify(userRepository, times(1)).findById(anyString());
-        verify(taskRepository, times(1)).findByUserAndIdIn(any(User.class), anyIterable());
+        verify(taskRepository, times(1)).findByUserAndIdIn(eq(defaultUser), anyIterable());
+        verify(taskRepository, never()).saveAndFlush(any());
     }
 
     @Test
@@ -130,7 +138,7 @@ public class TaskServiceTest {
     public void registerTaskTest4() {
 
         when(userRepository.findById(anyString())).thenReturn(Optional.of(defaultUser));
-        when(taskRepository.findByUserAndIdIn(any(User.class), anyIterable()))
+        when(taskRepository.findByUserAndIdIn(eq(defaultUser), anyIterable()))
                 .thenReturn(LongStream.range(1, 3)
                         .mapToObj(idx -> createDefaultTask(idx, false))
                         .collect(Collectors.toList()));
@@ -146,7 +154,8 @@ public class TaskServiceTest {
                         () -> taskService.registerTask(anyString(), taskRegParam4)).getExceptionType());
 
         verify(userRepository, times(1)).findById(anyString());
-        verify(taskRepository, times(1)).findByUserAndIdIn(any(User.class), anyIterable());
+        verify(taskRepository, times(1)).findByUserAndIdIn(eq(defaultUser), anyIterable());
+        verify(taskRepository, never()).saveAndFlush(any());
     }
 
     @Test
@@ -163,6 +172,8 @@ public class TaskServiceTest {
 
         verify(userRepository, times(1)).findById(anyString());
         verify(taskRepository, times(1)).findById(anyLong());
+        verify(taskRepository, never()).findByUserAndIdIn(any(), any());
+        verify(taskRepository, never()).existsInverseRelationTask(any(), any());
         verify(taskRepository, times(1)).saveAndFlush(any());
     }
 
@@ -210,6 +221,9 @@ public class TaskServiceTest {
 
         verify(userRepository, times(1)).findById(anyString());
         verify(taskRepository, times(1)).findById(anyLong());
+        verify(taskRepository, never()).findByUserAndIdIn(any(), any());
+        verify(taskRepository, never()).existsInverseRelationTask(any(), any());
+        verify(taskRepository, never()).saveAndFlush(any());
     }
 
     @Test
@@ -236,6 +250,8 @@ public class TaskServiceTest {
         verify(userRepository, times(1)).findById(anyString());
         verify(taskRepository, times(1)).findById(anyLong());
         verify(taskRepository, times(1)).findByUserAndIdIn(eq(defaultUser), anyIterable());
+        verify(taskRepository, never()).existsInverseRelationTask(any(), any());
+        verify(taskRepository, never()).saveAndFlush(any());
     }
 
     @Test
@@ -262,6 +278,8 @@ public class TaskServiceTest {
         verify(userRepository, times(1)).findById(anyString());
         verify(taskRepository, times(1)).findById(anyLong());
         verify(taskRepository, times(1)).findByUserAndIdIn(eq(defaultUser), anyIterable());
+        verify(taskRepository, never()).existsInverseRelationTask(any(), any());
+        verify(taskRepository, never()).saveAndFlush(any());
     }
 
     @Test
@@ -290,6 +308,7 @@ public class TaskServiceTest {
         verify(taskRepository, times(1)).findById(anyLong());
         verify(taskRepository, times(1)).findByUserAndIdIn(eq(defaultUser), anyIterable());
         verify(taskRepository, times(1)).existsInverseRelationTask(eq(1L), anyIterable());
+        verify(taskRepository, never()).saveAndFlush(any());
     }
 
     @Test
@@ -324,6 +343,7 @@ public class TaskServiceTest {
         verify(userRepository, times(1)).findById(anyString());
         verify(taskRepository, times(1)).findById(anyLong());
         verify(taskRepository, times(1)).existsNonCompleteInverseRelationTask(anyLong());
+        verify(taskRepository, never()).saveAndFlush(any());
     }
 
     @Test
@@ -337,6 +357,45 @@ public class TaskServiceTest {
 
         verify(userRepository, times(1)).findById(anyString());
         verify(taskRepository, times(1)).findById(anyLong());
+        verify(taskRepository, never()).existsNonCompleteInverseRelationTask(anyLong());
+        verify(taskRepository, never()).saveAndFlush(any());
+    }
+
+    @Test
+    public void getTasksTest() throws Exception {
+
+        when(userRepository.findById(anyString())).thenReturn(Optional.of(defaultUser));
+        when(taskRepository.findByUser(eq(defaultUser), any(PageRequest.class))).thenAnswer(mock -> {
+            List<Task> tasks = LongStream.range(1, 5)
+                    .mapToObj(idx -> createDefaultTask(idx, false))
+                    .collect(Collectors.toList());
+            Task task = createDefaultTask(5, false);
+            task.setRelationTasks(Collections.singletonList(createDefaultTask(1, false)));
+            tasks.add(task);
+            return new PageImpl<>(tasks, PageRequest.of(0, 5), 10);
+        });
+
+        TaskInfoResult taskInfoResult = taskService.getTasks("id", new PagingParam());
+
+        Assertions.assertNotNull(taskInfoResult);
+        Assertions.assertNotNull(taskInfoResult.getTaskInfos());
+        Assertions.assertEquals(10, taskInfoResult.getTotalCount());
+        Assertions.assertEquals(5, taskInfoResult.getTaskInfos().size());
+        Assertions.assertNotNull(taskInfoResult.getTaskInfos().get(4).getRelationTasks());
+
+        verify(userRepository, times(1)).findById(anyString());
+        verify(taskRepository, times(1)).findByUser(eq(defaultUser), any(PageRequest.class));
+    }
+
+    @Test
+    public void getTaskTest() throws Exception {
+
+        when(userRepository.findById(eq("id"))).thenReturn(Optional.of(defaultUser));
+        when(taskRepository.findById(eq(1L))).thenReturn(Optional.of(createDefaultTask(1L, false)));
+
+        Assertions.assertNotNull(taskService.getTask("id", 1L));
+        Assertions.assertThrows(BasedException.class, () -> taskService.getTask("id1", 1L));
+        Assertions.assertThrows(BasedException.class, () -> taskService.getTask("id", 2L));
     }
 
     private Task createDefaultTask(long id, boolean isCompleted) {

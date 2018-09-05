@@ -1,8 +1,6 @@
 package com.cyzest.cyrello.controller;
 
-import com.cyzest.cyrello.dto.ApiResponse;
-import com.cyzest.cyrello.dto.TaskInfo;
-import com.cyzest.cyrello.dto.TaskRegParam;
+import com.cyzest.cyrello.dto.*;
 import com.cyzest.cyrello.service.TaskService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +48,31 @@ public class TaskController {
         taskService.completeTask(authentication.getName(), id);
 
         return new ApiResponse();
+    }
+
+    @GetMapping("/tasks")
+    public ApiResponse getTasks(
+            @ModelAttribute PagingParam pagingParam, Authentication authentication) throws Exception {
+
+        ApiResponse apiResponse = new ApiResponse();
+
+        TaskInfoResult taskInfoResult = taskService.getTasks(authentication.getName(), pagingParam);
+
+        apiResponse.putExtra("paging", pagingParam);
+        apiResponse.putExtra("totalCount", taskInfoResult.getTotalCount());
+        apiResponse.putExtra("taskInfos", taskInfoResult.getTaskInfos());
+
+        return apiResponse;
+    }
+
+    @GetMapping("/tasks/{id}")
+    public ApiResponse getTask(@PathVariable long id, Authentication authentication) throws Exception {
+
+        ApiResponse apiResponse = new ApiResponse();
+
+        apiResponse.putExtra("taskInfo", taskService.getTask(authentication.getName(), id));
+
+        return apiResponse;
     }
 
 }
