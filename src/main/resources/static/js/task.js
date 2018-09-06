@@ -67,8 +67,8 @@ function viewTasks(page) {
 
 function registerTask() {
 
-    var content = $('#content').val();
-    var relationTaskIds = $('#relationTaskIds').val();
+    var content = $.trim($('#content').val());
+    var relationTaskIds = $.trim($('#relationTaskIds').val());
 
     if (content === '') {
         alert("할일을 입력하세요.");
@@ -142,8 +142,8 @@ function registerTask() {
 function updateTask() {
 
     var taskId = $('#uptTaskId').val();
-    var content = $('#uptContent').val();
-    var relationTaskIds = $('#uptRelationTaskIds').val();
+    var content = $.trim($('#uptContent').val());
+    var relationTaskIds = $.trim($('#uptRelationTaskIds').val());
 
     if (content === '') {
         alert("할일을 입력하세요.");
