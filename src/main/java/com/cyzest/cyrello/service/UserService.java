@@ -7,11 +7,11 @@ import com.cyzest.cyrello.dto.UserInfo;
 import com.cyzest.cyrello.dto.UserRegParam;
 import com.cyzest.cyrello.exception.BasedException;
 import com.cyzest.cyrello.exception.UserExceptionType;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,12 +20,16 @@ import java.util.UUID;
 
 @Slf4j
 @Service
-@AllArgsConstructor
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = new BCryptPasswordEncoder();
+    }
 
     public UserInfo registerUser(UserRegParam userRegParam) throws Exception {
 
