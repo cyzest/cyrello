@@ -15,6 +15,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.operation.preprocess.OperationPreprocessor;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -22,12 +26,20 @@ import java.time.LocalDateTime;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.removeHeaders;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
-@ExtendWith(MockitoExtension.class)
+@ExtendWith({RestDocumentationExtension.class, MockitoExtension.class})
 public class UserControllerTest {
 
     private MockMvc mvc;
@@ -39,11 +51,18 @@ public class UserControllerTest {
     private UserController userController;
 
     @BeforeEach
-    public void setup() {
+    public void setup(RestDocumentationContextProvider restDocumentation) {
+
+        OperationPreprocessor removeHeaderOperationPreprocessor = removeHeaders("Host", "Content-Length");
+
         mvc = MockMvcBuilders.standaloneSetup(userController)
                 .setMessageConverters(new MappingJackson2HttpMessageConverter())
                 .setControllerAdvice(new RestExceptionHandler())
-                .build();
+                .apply(documentationConfiguration(restDocumentation)
+                        .operationPreprocessors()
+                        .withRequestDefaults(prettyPrint(), removeHeaderOperationPreprocessor)
+                        .withResponseDefaults(prettyPrint(), removeHeaderOperationPreprocessor)
+                ).build();
     }
 
     @Test
@@ -56,7 +75,19 @@ public class UserControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .content("email=cyzest@nate.com&password=password"))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.extra.id", is("id")));
+                .andExpect(jsonPath("$.extra.id", is("id")))
+                .andDo(document(
+                        "register-user",
+                        requestParameters(
+                                parameterWithName("email").description("이메일"),
+                                parameterWithName("password").description("패스워드")
+                        ),
+                        responseFields(
+                                beneathPath("extra"),
+                                fieldWithPath("id")
+                                        .type(JsonFieldType.STRING).attributes().description("사용자 ID")
+                        )
+                ));
 
         verify(userService, times(1)).registerUser(any(UserRegParam.class));
 
