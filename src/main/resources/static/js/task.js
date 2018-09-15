@@ -222,7 +222,9 @@ function completeTask() {
 
     var taskId = $('#uptTaskId').val();
 
-    confirm("완료한 할일은 수정할 수 없습니다. 수정하시겠습니까?");
+    if (!confirm("완료한 할일은 수정할 수 없습니다. 수정하시겠습니까?")) {
+        return false;
+    }
 
     $.ajax({
         url: "/api/tasks/" + taskId + "/complete",
