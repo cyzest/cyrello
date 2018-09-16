@@ -15,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.authentication.TestingAuthenticationToken;
@@ -30,7 +31,8 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
@@ -189,6 +191,20 @@ public class TaskControllerTest {
                 .getTasks(eq("id"), eq(new PagingParam(2, 10)));
 
         clearInvocations(taskService);
+
+        mvc.perform(get("/api/tasks?page=0")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .principal(authentication)
+                .content(""))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code", is(HttpStatus.BAD_REQUEST.value())));
+
+        mvc.perform(get("/api/tasks?size=-1")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .principal(authentication)
+                .content(""))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code", is(HttpStatus.BAD_REQUEST.value())));
     }
 
     @Test

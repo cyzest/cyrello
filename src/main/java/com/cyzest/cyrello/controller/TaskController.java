@@ -52,7 +52,7 @@ public class TaskController {
 
     @GetMapping("/tasks")
     public ApiResponse getTasks(
-            @ModelAttribute PagingParam pagingParam, Authentication authentication) throws Exception {
+            @ModelAttribute @Valid PagingParam pagingParam, Authentication authentication) throws Exception {
 
         ApiResponse apiResponse = new ApiResponse();
 

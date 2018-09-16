@@ -142,7 +142,7 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(apiResponse, exceptionType.getStatusCode());
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Throwable.class)
     public ApiResponse errorExceptionHandler(Throwable ex) {
 
