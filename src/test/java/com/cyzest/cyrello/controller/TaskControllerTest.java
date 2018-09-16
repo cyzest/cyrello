@@ -165,6 +165,8 @@ public class TaskControllerTest {
         updateTaskExceptionTest(TaskExceptionType.CONTAINS_INVALID_REL_TASK);
 
         updateTaskExceptionTest(TaskExceptionType.EXIST_INVERSE_REL_TASK);
+
+        updateTaskExceptionTest(TaskExceptionType.CONTAINS_SELF_REL_TASK);
     }
 
     @Test

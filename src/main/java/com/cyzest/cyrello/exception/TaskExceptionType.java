@@ -22,7 +22,10 @@ public enum TaskExceptionType implements ExceptionType {
     EXIST_NON_COMPLETE_INVERSE_REL_TASK(4105, "Exist Non Complete Inverse Relation Task", HttpStatus.BAD_REQUEST),
 
     // 완료처리 된 태스크
-    COMPLETED_TASK(4106, "Completed Task", HttpStatus.BAD_REQUEST);
+    COMPLETED_TASK(4106, "Completed Task", HttpStatus.BAD_REQUEST),
+
+    // 셀프 참조 테스크 포함
+    CONTAINS_SELF_REL_TASK(4107, "Contains Self Relation Task", HttpStatus.BAD_REQUEST);
 
     private final int resultCode;
     private final String resultMessage;

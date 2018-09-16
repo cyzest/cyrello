@@ -214,7 +214,7 @@ public class TaskServiceTest {
         taskRegParam.setRelationTaskIds(Arrays.asList(1L, 2L));
 
         Assertions.assertEquals(
-                TaskExceptionType.CONTAINS_INVALID_REL_TASK,
+                TaskExceptionType.CONTAINS_SELF_REL_TASK,
                 Assertions.assertThrows(
                         BasedException.class,
                         () -> taskService.updateTask("id", 1, taskRegParam)).getExceptionType());

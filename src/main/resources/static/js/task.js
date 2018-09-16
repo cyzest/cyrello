@@ -204,6 +204,8 @@ function updateTask() {
                 $('#relationTaskIds').val('');
             } else if (errorCode === 4106) {
                 alert("완료처리된 할일은 수정할 수 없습니다.");
+            } else if (errorCode === 4107) {
+                alert("자기 자신을 참조 할 수 없습니다.");
             } else if (errorCode === 400) {
                 alert("참조 할 할일은 ID와 쉼표로 만 작성해주세요.");
                 $('#relationTaskIds').val('');
