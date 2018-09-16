@@ -3,7 +3,9 @@ $(function() {
     viewTasks(1);
 
     $('#task-body').on("click", "tr", function () {
-        viewTaskPopUp($(this).children(":first").text());
+        if ($(this).is('[role=row]')) {
+            viewTaskPopUp($(this).children(":first").text());
+        }
     });
 
 });
