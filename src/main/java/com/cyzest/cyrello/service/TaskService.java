@@ -88,7 +88,7 @@ public class TaskService {
 
             if (relationTaskIds.contains(taskId)) {
                 // 참조 태스크에 수정 할 태스크가 존재하면 예외 처리
-                throw new BasedException(TaskExceptionType.CONTAINS_INVALID_REL_TASK);
+                throw new BasedException(TaskExceptionType.CONTAINS_SELF_REL_TASK);
             }
 
             // 참조 태스크가 유효하지 않은 태스크 및 완료처리 된 태스크가 없는지 확인한다.
