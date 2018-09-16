@@ -13,7 +13,7 @@ Paging = function (totalCnt, dataSize, pageSize, pageNo) {
         html.push('<li class="page-item disabled"><a class="page-link" href="#">');
         html.push('◀');
         html.push('</a></li>');
-        html.push('<li class="page-item">');
+        html.push('<li class="page-item active">');
         html.push('<a class="page-link" href="#">1</a>');
         html.push('</li>');
         html.push('<li class="page-item disabled"><a class="page-link" href="#">');
@@ -64,7 +64,7 @@ Paging = function (totalCnt, dataSize, pageSize, pageNo) {
     for (var index = pRCnt * pageSize + 1; index < (pRCnt + 1) * pageSize + 1; index++) {
 
         if (index == pageNo) {
-            html.push('<li class="page-item"><a class="page-link" href="#">');
+            html.push('<li class="page-item active"><a class="page-link" href="#">');
             html.push(index + '<span class="sr-only">(current)</span>');
             html.push('</a></li>');
         } else {

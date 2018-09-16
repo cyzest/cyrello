@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/cyzest/cyrello.svg?branch=master)](https://travis-ci.org/cyzest/cyrello)
 [![Code Coverage](https://codecov.io/gh/cyzest/cyrello/branch/master/graph/badge.svg)](https://codecov.io/gh/cyzest/cyrello)
+[![API Docs](https://img.shields.io/badge/api--docs-open-blue.svg)](https://cyrello.cyzest.com/docs/api-docs.html)
 
 ### Back-end 개발 환경
 

@@ -3,6 +3,7 @@ package com.cyzest.cyrello.dao;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -41,6 +42,7 @@ public class Task {
             inverseJoinColumns = @JoinColumn(name = "REL_TASK_ID"),
             uniqueConstraints = @UniqueConstraint(columnNames = {"TASK_ID", "REL_TASK_ID"})
     )
+    @BatchSize(size = 10)
     private List<Task> relationTasks;
 
 }
