@@ -112,6 +112,9 @@ operation::update-task[snippets='http-request,path-parameters,request-fields,htt
 
 | `4106`
 | 완료처리 된 할일
+
+| `4107`
+| 셀프 참조 할일 포함
 |===
 
 [[resources-task-complete]]
