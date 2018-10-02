@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -17,8 +16,6 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TaskInfo {
-
-    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private Long id;
     private String content;
@@ -40,16 +37,6 @@ public class TaskInfo {
                 .orElse(Collections.emptyList())
                 .stream().map(RelationTaskInfo::new)
                 .collect(Collectors.toList());
-    }
-
-    public String getRegisterDateToFormatString() {
-        return Optional.ofNullable(registerDate)
-                .map(registerDate -> registerDate.format(dateFormatter)).orElse("");
-    }
-
-    public String getUpdateDateToFormatString() {
-        return Optional.ofNullable(updateDate)
-                .map(registerDate -> registerDate.format(dateFormatter)).orElse("");
     }
 
 }

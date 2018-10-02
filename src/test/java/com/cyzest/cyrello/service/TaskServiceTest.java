@@ -396,8 +396,6 @@ public class TaskServiceTest {
         TaskInfo taskInfo = taskService.getTask("id", 1L);
 
         Assertions.assertNotNull(taskInfo);
-        Assertions.assertNotNull(taskInfo.getRegisterDateToFormatString());
-        Assertions.assertNotNull(taskInfo.getUpdateDateToFormatString());
         Assertions.assertThrows(BasedException.class, () -> taskService.getTask("id1", 1L));
         Assertions.assertThrows(BasedException.class, () -> taskService.getTask("id", 2L));
     }

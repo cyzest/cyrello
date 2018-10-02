@@ -279,12 +279,12 @@ function refreshTable(data) {
         lengthChange: false,
         data: data.extra.taskInfos,
         columns: [
-            { data: 'id', width: '10%'},
-            { data: 'content', width: '30%'},
+            { data: "id", width: "10%"},
+            { data: "content", width: "30%"},
             {
-                "data": "relationTasks",
-                "width": "20%",
-                "render": function (relationTasks) {
+                data: "relationTasks",
+                width: "20%",
+                render: function (relationTasks) {
                     var relString = "";
                     if (relationTasks != null) {
                         for (var i=0; i < relationTasks.length; i++) {
@@ -294,13 +294,13 @@ function refreshTable(data) {
                     return relString;
                 }
             },
-            { data: 'registerDateToFormatString', width: '15%'},
-            { data: 'updateDateToFormatString', width: '15%'},
+            { data: "registerDate", width: "15%", render: convertDate },
+            { data: "updateDate", width: "15%", render: convertDate },
             {
-                "data": "completeDate",
-                "width": "10%",
-                "render": function (completeDate) {
-                    return completeDate != null ? '완료' : '미완료';
+                data: "completeDate",
+                width: "10%",
+                render: function (completeDate) {
+                    return completeDate != null ? "완료" : "미완료";
                 }
             }
         ]
@@ -308,6 +308,10 @@ function refreshTable(data) {
 
     var pageView = Paging(data.extra.totalCount, data.extra.paging.size, 10 , data.extra.paging.page);
 
-    $("#paging").empty().html(pageView);
+    $('#paging').empty().html(pageView);
 
+}
+
+function convertDate(date) {
+    return moment(date).format("YYYY-MM-DD HH:mm:ss");
 }
