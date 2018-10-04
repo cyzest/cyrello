@@ -15,16 +15,18 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.session.ExpiringSession;
+import org.springframework.session.MapSession;
 import org.springframework.session.MapSessionRepository;
 import org.springframework.session.SessionRepository;
 import org.springframework.session.config.annotation.web.http.EnableSpringHttpSession;
-import org.springframework.session.web.http.HeaderHttpSessionStrategy;
-import org.springframework.session.web.http.HttpSessionStrategy;
+import org.springframework.session.web.http.HeaderHttpSessionIdResolver;
+import org.springframework.session.web.http.HttpSessionIdResolver;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 @Configuration
 @EnableWebSecurity
@@ -76,17 +78,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public SessionRepository<ExpiringSession> sessionRepository() {
-        MapSessionRepository mapSessionRepository = new MapSessionRepository();
+    public SessionRepository<MapSession> sessionRepository() {
+        MapSessionRepository mapSessionRepository = new MapSessionRepository(new ConcurrentHashMap<>());
         mapSessionRepository.setDefaultMaxInactiveInterval(60 * 60);
         return mapSessionRepository;
     }
 
     @Bean
-    public HttpSessionStrategy httpSessionStrategy() {
-        HeaderHttpSessionStrategy headerHttpSessionStrategy = new HeaderHttpSessionStrategy();
-        headerHttpSessionStrategy.setHeaderName(HttpHeaders.AUTHORIZATION);
-        return headerHttpSessionStrategy;
+    public HttpSessionIdResolver httpSessionIdResolver() {
+        return new HeaderHttpSessionIdResolver(HttpHeaders.AUTHORIZATION);
     }
 
     @Autowired
