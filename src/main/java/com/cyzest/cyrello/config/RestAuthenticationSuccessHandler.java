@@ -28,13 +28,20 @@ public class RestAuthenticationSuccessHandler implements AuthenticationSuccessHa
             HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
 
+        String sessionId = request.getSession().getId();
+
         response.setStatus(HttpStatus.OK.value());
         response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE);
 
+        if ("true".equals(request.getParameter("isWeb"))) {
+            response.addCookie(CookieAuthentications.createCookie(sessionId));
+        }
+
         PrintWriter writer = response.getWriter();
 
-        ApiResponse apiResponse = new ApiResponse(
-                HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase());
+        ApiResponse apiResponse = new ApiResponse();
+
+        apiResponse.putExtra("token", sessionId);
 
         mapper.writeValue(writer, apiResponse);
 
