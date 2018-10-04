@@ -12,6 +12,7 @@ public class CookieAuthentications {
     public static Cookie createCookie(String token) {
         Cookie cookie = new Cookie(AUTHENTICATION_TOKEN_COOKIE, token);
         cookie.setPath("/");
+        cookie.setHttpOnly(true);
         cookie.setMaxAge(-1);
         return cookie;
     }
@@ -19,6 +20,7 @@ public class CookieAuthentications {
     public static Cookie createInvalidCookie() {
         Cookie cookie = new Cookie(AUTHENTICATION_TOKEN_COOKIE, "");
         cookie.setPath("/");
+        cookie.setHttpOnly(true);
         cookie.setMaxAge(0);
         return cookie;
     }
