@@ -25,7 +25,7 @@
 $ git clone https://github.com/cyzest/cyrello.git
 $ cd cyrello
 $ mvn clean package
-$ java -jar ./target/cyrello-1.1.0.jar
+$ java -jar ./target/cyrello-1.2.0.jar
 ```
 
 * http://localhost:8080 으로 접속하여 확인
