@@ -33,10 +33,7 @@ public class RestAuthenticationFailureHandler implements AuthenticationFailureHa
 
         PrintWriter writer = response.getWriter();
 
-        ApiResponse apiResponse = new ApiResponse(
-                HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
-
-        mapper.writeValue(writer, apiResponse);
+        mapper.writeValue(writer, new ApiResponse(HttpStatus.UNAUTHORIZED));
 
         writer.flush();
     }

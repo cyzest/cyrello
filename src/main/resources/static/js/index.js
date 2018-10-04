@@ -50,7 +50,8 @@ function login() {
         dataType: 'json',
         data: jQuery.param({
             email: $('#email').val(),
-            password: $('#password').val()
+            password: $('#password').val(),
+            isWeb: "true"
         }),
         success: function () {
             window.location.href = "/";
