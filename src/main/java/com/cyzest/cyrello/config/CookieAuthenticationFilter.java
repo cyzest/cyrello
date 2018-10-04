@@ -42,7 +42,7 @@ public class CookieAuthenticationFilter extends GenericFilterBean {
 
             if (cookie != null) {
 
-                Session session = sessionRepository.getSession(cookie.getValue());
+                Session session = sessionRepository.findById(cookie.getValue());
 
                 if (session != null) {
 
