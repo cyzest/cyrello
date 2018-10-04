@@ -1,5 +1,11 @@
 $(function() {
 
+    $.ajaxSetup({
+        xhrFields: {
+            withCredentials: true
+        }
+    });
+
     viewTasks(1);
 
     $('#task-body').on("click", "tr", function () {
@@ -7,6 +13,8 @@ $(function() {
             viewTaskPopUp($(this).children(":first").text());
         }
     });
+
+
 
 });
 
