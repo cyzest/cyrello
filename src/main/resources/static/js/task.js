@@ -14,8 +14,6 @@ $(function() {
         }
     });
 
-
-
 });
 
 function viewTaskPopUp(id) {

@@ -55,8 +55,8 @@ function login() {
         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
         dataType: 'json',
         data: jQuery.param({
-            email: $('#email').val(),
-            password: $('#password').val(),
+            email: email,
+            password: password,
             isWeb: "true"
         }),
         success: function () {
@@ -115,8 +115,8 @@ function register() {
         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
         dataType: 'json',
         data: jQuery.param({
-            email: $('#reg_email').val(),
-            password: $('#reg_password').val()
+            email: email,
+            password: password
         }),
         success: function () {
             window.location.href = "/";
