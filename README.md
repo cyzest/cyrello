@@ -42,7 +42,7 @@ $ git clone https://github.com/cyzest/cyrello.git
 $ cd cyrello
 $ mvn clean test
 $ mvn clean package -Pdev -Dmaven.test.skip=true
-$ java -DVAULT_TOKEN={VAULT_TOKEN} -Dsentry.dsn={SENTRY_DSN} -jar ./target/find-books-1.0.0.jar
+$ java -DVAULT_TOKEN={VAULT_TOKEN} -Dsentry.dsn={SENTRY_DSN} -jar ./target/cyrello-1.2.0.jar
 ```
 * Dev 서버는 Sentry와 Vault를 연동
 * Java System Property로 Vault Token과 Sentry DSN을 추가해야 합니다.
