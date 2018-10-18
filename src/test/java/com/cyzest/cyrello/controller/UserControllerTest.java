@@ -2,9 +2,9 @@ package com.cyzest.cyrello.controller;
 
 import com.cyzest.cyrello.dto.UserInfo;
 import com.cyzest.cyrello.dto.UserRegParam;
-import com.cyzest.cyrello.exception.BasedException;
 import com.cyzest.cyrello.exception.UserExceptionType;
 import com.cyzest.cyrello.service.UserService;
+import io.github.cyzest.commons.spring.model.BasedException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,6 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.removeHeaders;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;

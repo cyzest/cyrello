@@ -2,12 +2,12 @@ package com.cyzest.cyrello.controller;
 
 import com.cyzest.cyrello.dao.User;
 import com.cyzest.cyrello.dto.*;
-import com.cyzest.cyrello.exception.BasedException;
 import com.cyzest.cyrello.exception.CommonExceptionType;
-import com.cyzest.cyrello.exception.ExceptionType;
 import com.cyzest.cyrello.exception.TaskExceptionType;
 import com.cyzest.cyrello.service.TaskService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.cyzest.commons.spring.model.BasedException;
+import io.github.cyzest.commons.spring.model.ExceptionType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,9 +40,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.removeHeaders;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;

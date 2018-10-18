@@ -1,7 +1,7 @@
 package com.cyzest.cyrello.config;
 
-import com.cyzest.cyrello.dto.ApiResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.cyzest.commons.spring.web.ApiResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;

@@ -4,7 +4,7 @@ import com.cyzest.cyrello.dao.User;
 import com.cyzest.cyrello.dao.UserRepository;
 import com.cyzest.cyrello.dto.UserInfo;
 import com.cyzest.cyrello.dto.UserRegParam;
-import com.cyzest.cyrello.exception.BasedException;
+import io.github.cyzest.commons.spring.model.BasedException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,9 +1,9 @@
 package com.cyzest.cyrello.controller;
 
-import com.cyzest.cyrello.dto.ApiResponse;
 import com.cyzest.cyrello.dto.UserInfo;
 import com.cyzest.cyrello.dto.UserRegParam;
 import com.cyzest.cyrello.service.UserService;
+import io.github.cyzest.commons.spring.web.ApiResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

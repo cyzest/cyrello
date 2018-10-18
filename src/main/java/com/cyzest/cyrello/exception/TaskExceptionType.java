@@ -1,5 +1,6 @@
 package com.cyzest.cyrello.exception;
 
+import io.github.cyzest.commons.spring.model.ExceptionType;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
