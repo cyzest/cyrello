@@ -25,6 +25,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.filter.ForwardedHeaderFilter;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -65,6 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutUrl("/api/users/logout")
                 .logoutSuccessHandler(new RestLogoutSuccessHandler())
                 .and()
+                .addFilterBefore(new ForwardedHeaderFilter(), CorsFilter.class)
                 .addFilterBefore(
                         new CookieAuthenticationFilter("/api/**", sessionRepository()),
                         UsernamePasswordAuthenticationFilter.class);
