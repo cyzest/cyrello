@@ -153,7 +153,7 @@ public class TaskService {
                 .orElseThrow(() -> new BasedException(CommonExceptionType.UNAUTHORIZED));
 
         PageRequest pageRequest = PageRequest.of(
-                pagingParam.getPage() - 1, pagingParam.getSize(), new Sort(Sort.Direction.ASC, "id"));
+                pagingParam.getPage() - 1, pagingParam.getSize(), Sort.by(Sort.Direction.ASC, "id"));
 
         Page<Task> tasksPage = taskRepository.findByUser(user, pageRequest);
 

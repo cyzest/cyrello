@@ -27,7 +27,7 @@ public class TaskRepositoryTest {
     @Autowired
     private TaskRepository taskRepository;
 
-    private static ThreadLocal<Long> increment = new ThreadLocal<>();
+    private static final ThreadLocal<Long> increment = new ThreadLocal<>();
 
     @BeforeEach
     public void setup() {
@@ -124,21 +124,21 @@ public class TaskRepositoryTest {
 
         PageRequest pageRequest;
 
-        pageRequest = PageRequest.of(0, 2, new Sort(Sort.Direction.DESC, "id"));
+        pageRequest = PageRequest.of(0, 2, Sort.by(Sort.Direction.DESC, "id"));
         tasksPage = taskRepository.findByUser(user, pageRequest);
         Assertions.assertNotNull(tasksPage);
         Assertions.assertNotNull(tasksPage.getContent());
         Assertions.assertEquals(5, tasksPage.getTotalElements());
         Assertions.assertEquals(2, tasksPage.getNumberOfElements());
 
-        pageRequest = PageRequest.of(2, 2, new Sort(Sort.Direction.DESC, "id"));
+        pageRequest = PageRequest.of(2, 2, Sort.by(Sort.Direction.DESC, "id"));
         tasksPage = taskRepository.findByUser(user, pageRequest);
         Assertions.assertNotNull(tasksPage);
         Assertions.assertNotNull(tasksPage.getContent());
         Assertions.assertEquals(5, tasksPage.getTotalElements());
         Assertions.assertEquals(1, tasksPage.getNumberOfElements());
 
-        pageRequest = PageRequest.of(3, 2, new Sort(Sort.Direction.DESC, "id"));
+        pageRequest = PageRequest.of(3, 2, Sort.by(Sort.Direction.DESC, "id"));
         tasksPage = taskRepository.findByUser(user, pageRequest);
         Assertions.assertNotNull(tasksPage);
         Assertions.assertNotNull(tasksPage.getContent());

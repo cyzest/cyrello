@@ -95,7 +95,7 @@ public class TaskControllerTest {
         taskRegParam1.setContent("test");
 
         mvc.perform(post("/api/tasks")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
                 .principal(authentication)
                 .content(objectMapper.writeValueAsString(taskRegParam1)))
                 .andExpect(status().isCreated())
@@ -135,7 +135,7 @@ public class TaskControllerTest {
         taskRegParam.setContent("test");
 
         mvc.perform(RestDocumentationRequestBuilders.put("/api/tasks/{taskId}", 1)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
                 .principal(authentication)
                 .content(objectMapper.writeValueAsString(taskRegParam)))
                 .andExpect(status().isOk())
@@ -174,7 +174,7 @@ public class TaskControllerTest {
         doNothing().when(taskService).completeTask(anyString(), anyLong());
 
         mvc.perform(RestDocumentationRequestBuilders.post("/api/tasks/{taskId}/complete", 1)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
                 .principal(authentication)
                 .content(""))
                 .andExpect(status().isOk())
@@ -206,7 +206,7 @@ public class TaskControllerTest {
         });
 
         mvc.perform(get("/api/tasks")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
                 .principal(authentication)
                 .content(""))
                 .andExpect(status().isOk())
@@ -236,7 +236,7 @@ public class TaskControllerTest {
         });
 
         mvc.perform(get("/api/tasks?page=2")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
                 .principal(authentication)
                 .content(""))
                 .andExpect(status().isOk())
@@ -249,14 +249,14 @@ public class TaskControllerTest {
         clearInvocations(taskService);
 
         mvc.perform(get("/api/tasks?page=0")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
                 .principal(authentication)
                 .content(""))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code", is(HttpStatus.BAD_REQUEST.value())));
 
         mvc.perform(get("/api/tasks?size=-1")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
                 .principal(authentication)
                 .content(""))
                 .andExpect(status().isBadRequest())
@@ -269,7 +269,7 @@ public class TaskControllerTest {
         when(taskService.getTask(eq("id"), eq(1L))).thenReturn(createDefaultTaskInfo(1L));
 
         mvc.perform(RestDocumentationRequestBuilders.get("/api/tasks/{taskId}", 1)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
                 .principal(authentication)
                 .content(""))
                 .andExpect(status().isOk())
@@ -295,7 +295,7 @@ public class TaskControllerTest {
         taskRegParam.setContent("test");
 
         mvc.perform(post("/api/tasks")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
                 .principal(authentication)
                 .content(objectMapper.writeValueAsString(taskRegParam)))
                 .andExpect(status().is(exceptionType.getStatusCode().value()))
@@ -315,7 +315,7 @@ public class TaskControllerTest {
         taskRegParam.setContent("test");
 
         mvc.perform(put("/api/tasks/1")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
                 .principal(authentication)
                 .content(objectMapper.writeValueAsString(taskRegParam)))
                 .andExpect(status().is(exceptionType.getStatusCode().value()))
@@ -336,7 +336,7 @@ public class TaskControllerTest {
         taskRegParam.setContent("test");
 
         mvc.perform(post("/api/tasks/1/complete")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
                 .principal(authentication)
                 .content(""))
                 .andExpect(status().is(exceptionType.getStatusCode().value()))

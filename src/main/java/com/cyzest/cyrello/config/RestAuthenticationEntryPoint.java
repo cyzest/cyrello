@@ -32,7 +32,7 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
         Optional.ofNullable(request.getSession(false)).ifPresent(HttpSession::invalidate);
 
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE);
+        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 
         response.addCookie(CookieAuthentications.createInvalidCookie());
 

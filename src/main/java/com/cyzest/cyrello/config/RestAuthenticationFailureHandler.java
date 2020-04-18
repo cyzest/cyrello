@@ -29,7 +29,7 @@ public class RestAuthenticationFailureHandler implements AuthenticationFailureHa
             AuthenticationException exception) throws IOException, ServletException {
 
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE);
+        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 
         PrintWriter writer = response.getWriter();
 

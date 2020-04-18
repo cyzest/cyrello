@@ -31,7 +31,7 @@ public class RestAuthenticationSuccessHandler implements AuthenticationSuccessHa
         String sessionId = request.getSession().getId();
 
         response.setStatus(HttpStatus.OK.value());
-        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE);
+        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 
         if ("true".equals(request.getParameter("isWeb"))) {
             response.addCookie(CookieAuthentications.createCookie(sessionId));
