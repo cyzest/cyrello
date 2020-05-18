@@ -113,7 +113,7 @@ public class UserServiceTest {
         when(userRepository.existsByEmail(anyString())).thenReturn(false);
 
         Assertions.assertThrows(
-                NullPointerException.class,
+                IllegalArgumentException.class,
                 () -> userService.registerUser(new UserRegParam(anyString(), null)));
 
         verify(userRepository, times(1)).existsByEmail(anyString());
