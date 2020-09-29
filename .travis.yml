@@ -14,7 +14,7 @@ cache:
     - '$HOME/.m2/repository'
 
 script:
-  - "mvn clean compile test"
+  - "./mvnw clean test"
 
 #after_success:
 #  - bash <(curl -s https://codecov.io/bash)

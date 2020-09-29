@@ -1,14 +1,15 @@
 # cyrello
 
-[![Build Status](https://travis-ci.org/cyzest/cyrello.svg?branch=master)](https://travis-ci.org/cyzest/cyrello)
+[![Github Workflows](https://github.com/cyzest/cyrello/workflows/Java%20CI%20with%20Maven/badge.svg)](https://github.com/cyzest/cyrello/actions?query=workflow%3A%22Java+CI+with+Maven%22)
+[![Travis CI](https://img.shields.io/travis/cyzest/cyrello/master.svg?label=travis-ci)](https://travis-ci.org/cyzest/cyrello)
 [![Code Coverage](https://codecov.io/gh/cyzest/cyrello/branch/master/graph/badge.svg)](https://codecov.io/gh/cyzest/cyrello)
 [![API Docs](https://img.shields.io/badge/api--docs-open-blue.svg)](https://cyrello.cyzest.com/docs/api-docs.html)
 
 ### Back-end 개발 환경
 
-1. Java 8 버전을 사용
-1. Spring Boot 2.1 사용 (Spring Framework 5.1 기반)
-1. Spring Data JPA 사용 (Hibernate 5.3 구현체)
+1. Java 14 버전을 사용
+1. Spring Boot 2.3 사용 (Spring Framework 5.2 기반)
+1. Spring Data JPA 사용 (Hibernate 5.4 구현체)
 1. H2 DB 사용 (Dev서버는 MariaDB 사용)
 1. Junit5 & Mockito로 단위테스트 작성
 
@@ -24,11 +25,11 @@
 ### 빌드 및 실행 (Local)
 
 * 빌드툴은 Maven을 활용
-* 빌드 시 Java8과 Maven이 미리 설치되어 있어야 한다.
+* 빌드 시 Java 14가 미리 설치되어 있어야 한다.
 ```console
 $ git clone https://github.com/cyzest/cyrello.git
 $ cd cyrello
-$ mvn clean package
+$ ./mvnw clean package
 $ java -jar ./target/cyrello-1.2.0.jar
 ```
 * http://localhost:8080 으로 접속하여 확인
@@ -40,8 +41,8 @@ $ java -jar ./target/cyrello-1.2.0.jar
 ```console
 $ git clone https://github.com/cyzest/cyrello.git
 $ cd cyrello
-$ mvn clean test
-$ mvn clean package -Pdev -Dmaven.test.skip=true
+$ ./mvnw clean test
+$ ./mvnw clean package -Pdev -Dmaven.test.skip=true
 $ java -DVAULT_TOKEN={VAULT_TOKEN} -Dsentry.dsn={SENTRY_DSN} -jar ./target/cyrello-1.2.0.jar
 ```
 * Dev 서버는 Sentry와 Vault를 연동
