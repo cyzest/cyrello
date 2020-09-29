@@ -6,6 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.session.MapSession;
 import org.springframework.session.Session;
 import org.springframework.session.SessionRepository;
 import org.springframework.web.filter.GenericFilterBean;
@@ -21,11 +22,11 @@ import java.io.IOException;
 @Slf4j
 public class CookieAuthenticationFilter extends GenericFilterBean {
 
-    private SessionRepository sessionRepository;
+    private final SessionRepository<MapSession> sessionRepository;
 
-    private RequestMatcher requestMatcher;
+    private final RequestMatcher requestMatcher;
 
-    public CookieAuthenticationFilter(String pattern, SessionRepository sessionRepository) {
+    public CookieAuthenticationFilter(String pattern, SessionRepository<MapSession> sessionRepository) {
         this.requestMatcher = new AntPathRequestMatcher(pattern);
         this.sessionRepository = sessionRepository;
     }

@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 @AllArgsConstructor
 public class WebController {
 
-    private SessionRepository<MapSession> sessionRepository;
+    private final SessionRepository<MapSession> sessionRepository;
 
     @GetMapping("/")
     public String index(HttpServletRequest request) {
