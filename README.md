@@ -3,7 +3,7 @@
 [![Github Workflows](https://github.com/cyzest/cyrello/workflows/Java%20CI%20with%20Maven/badge.svg)](https://github.com/cyzest/cyrello/actions?query=workflow%3A%22Java+CI+with+Maven%22)
 [![Travis CI](https://img.shields.io/travis/cyzest/cyrello/master.svg?label=travis-ci)](https://travis-ci.org/cyzest/cyrello)
 [![Code Coverage](https://codecov.io/gh/cyzest/cyrello/branch/master/graph/badge.svg)](https://codecov.io/gh/cyzest/cyrello)
-[![API Docs](https://img.shields.io/badge/api--docs-open-blue.svg)](https://cyrello.cyzest.com/docs/api-docs.html)
+[![API Docs](https://img.shields.io/badge/api--docs-open-blue.svg)](https://htmlpreview.github.io/?https://github.com/cyzest/cyrello/blob/master/src/main/resources/static/docs/api-docs.html)
 
 ### Back-end 개발 환경
 
