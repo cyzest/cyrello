@@ -9,6 +9,8 @@ public class CookieAuthentications {
 
     private static final String AUTHENTICATION_TOKEN_COOKIE = "at";
 
+    private CookieAuthentications() {}
+
     public static Cookie createCookie(String token) {
         Cookie cookie = new Cookie(AUTHENTICATION_TOKEN_COOKIE, token);
         cookie.setPath("/");

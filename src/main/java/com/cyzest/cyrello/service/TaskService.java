@@ -160,10 +160,7 @@ public class TaskService {
         List<Task> tasks = tasksPage.getContent();
 
         taskInfoResult.setTotalCount((int) tasksPage.getTotalElements());
-
-        if (tasks != null) {
-            taskInfoResult.setTaskInfos(tasks.stream().map(TaskInfo::new).collect(Collectors.toList()));
-        }
+        taskInfoResult.setTaskInfos(tasks.stream().map(TaskInfo::new).collect(Collectors.toList()));
 
         return taskInfoResult;
     }
