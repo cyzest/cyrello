@@ -8,7 +8,7 @@
 ### Back-end 개발 환경
 
 1. Java 14 버전을 사용
-1. Spring Boot 2.4 사용 (Spring Framework 5.3 기반)
+1. Spring Boot 2.5 사용 (Spring Framework 5.3 기반)
 1. Spring Data JPA 사용 (Hibernate 5.4 구현체)
 1. H2 DB 사용 (Dev서버는 MariaDB 사용)
 1. Junit5 & Mockito로 단위테스트 작성
@@ -25,7 +25,7 @@
 ### 빌드 및 실행 (Local)
 
 * 빌드툴은 Maven을 활용
-* 빌드 시 Java 14가 미리 설치되어 있어야 한다.
+* 빌드 시 Java 16가 미리 설치되어 있어야 한다.
 ```console
 $ git clone https://github.com/cyzest/cyrello.git
 $ cd cyrello
@@ -56,4 +56,4 @@ spring.datasource.username              // DB User
 spring.datasource.password              // DB User Password
 sentry.dsn                              // Sentry DSN
 ```
-* Vault 정보를 자신의 환경에 맞게 변경해야 합니다. (bootstrap.properties 에서 수정가능)
+* Vault 정보를 자신의 환경에 맞게 변경해야 합니다. (application.properties 에서 수정가능)
